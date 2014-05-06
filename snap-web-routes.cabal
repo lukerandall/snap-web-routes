@@ -4,7 +4,7 @@ synopsis:            Type safe URLs for Snap
 description:
     Type safe URL generation and routing for Snap using web-routes.
     .
-    To get started, run through the tutorial in Snap.Web.Routes.
+    To get started, there is a __<https://github.com/lukerandall/snap-web-routes/blob/master/README.md tutorial on GitHub>__.
     .
     This builds on <https://github.com/stepcut/snap-web-routes-demo work>
     done by Jeremy Shaw. Thanks Jeremy!
