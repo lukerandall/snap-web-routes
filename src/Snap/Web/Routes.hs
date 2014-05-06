@@ -4,16 +4,18 @@
 -- |
 -- This module provides a ready to use implementation of `web-routes` for Snap.
 --
--- The tutorial assumes you have a standard Snap app with Application.hs and
+-- The tutorial assumes you have a standard Snap app with an Application.hs and
 -- Site.hs.
 --
--- To get going, you'll need to enable a few extensions in Application.hs:
+-- To get going, you'll need to add a few things to Application.hs
 --
 -- @
--- \-\- we'll need to derive a generic instance for our URL data type
+-- -- Enable a few extensions
+--
+-- \-\- Needed to derive a generic instance for our URL data type
 -- \{\-\# LANGUAGE DeriveGeneric     \#\-\}
 --
--- \-\- needed by web-routes
+-- \-\- Needed by web-routes
 -- \{\-\# LANGUAGE FlexibleInstances \#\-\}
 -- \{\-\# LANGUAGE TypeFamilies      \#\-\}
 --
@@ -39,7 +41,8 @@
 --
 -- \-\- Thanks to the wonders of Generic, an empty instance
 -- \-\- definition is all we need. Alternately, you can implement
--- \-\- toPathSegments and fromPathSegments yourself.
+-- \-\- toPathSegments and fromPathSegments yourself or use
+-- \-\- web-routes-th.
 -- instance PathInfo AppUrl
 --
 -- \-\- Set URL (Handler App App) to your URL data type defined above
@@ -50,7 +53,7 @@
 --    askRouteFn = gets _routeFn
 -- @
 --
--- Moving on to `Site.hs`.
+-- Moving on to Site.hs.
 --
 -- @
 -- \-\- Snap.Web.Routes provides routing functions
@@ -72,7 +75,7 @@
 --
 -- \-\- You'll note that these are normal Snap handlers, except they can take
 -- \-\- values from the data constructor as arguments. This is a lot nicer than
--- \-\- having using getParam.
+-- \-\- having to use getParam.
 -- echo :: T.Text -> Handler App App ()
 -- echo msg = heistLocal (bindString "message" msg) $ render "echo"
 --
