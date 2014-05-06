@@ -19,9 +19,10 @@
 --
 -- \-\- Paths and params are of type Text.
 -- import Data.Text (Text)
--- \-\- Snap.Web.Routes exports everything you need to
+--
+-- \-\- Snap.Web.Routes.Types exports everything you need to
 -- \-\- define your PathInfo and MonadRoute instances.
--- import Snap.Web.Routes
+-- import Snap.Web.Routes.Types
 --
 -- \-\- Your URL data type.  Deriving a `Generic` instance gives
 -- \-\- you a `PathInfo` instance for free.
@@ -102,10 +103,6 @@ module Snap.Web.Routes
   , renderRoute
   , renderRouteWithPrefix
   , heistUrl
-  , gets
-  , Generic
-  , MonadRoute(..)
-  , PathInfo(..)
   ) where
 
 import Control.Monad.State (lift, gets)
