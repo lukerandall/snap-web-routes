@@ -62,7 +62,7 @@
 --          , ("", serveDirectory "static")
 --          ]
 --
--- \-\- Define handlers for each data constructor in your URL data type.
+-- \-\- Define handlers for each value constructor in your URL data type.
 -- routeAppUrl :: AppUrl -> Handler App App ()
 -- routeAppUrl appUrl =
 --     case appUrl of
@@ -71,7 +71,7 @@
 --       (Paths ps)  -> writeText $ T.intercalate " " ps
 --
 -- \-\- You'll note that these are normal Snap handlers, except they can take
--- \-\- values from the data constructor as arguments. This is a lot nicer than
+-- \-\- values from the value constructor as arguments. This is a lot nicer than
 -- \-\- having to use getParam.
 -- echo :: T.Text -> Handler App App ()
 -- echo msg = heistLocal (bindString "message" msg) $ render "echo"
