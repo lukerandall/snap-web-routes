@@ -1,5 +1,5 @@
 name:                snap-web-routes
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            Type safe URLs for Snap
 description:
     Type safe URL generation and routing for Snap using web-routes.
