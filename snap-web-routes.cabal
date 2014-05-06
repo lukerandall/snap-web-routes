@@ -30,6 +30,7 @@ library
 
   exposed-modules:
     Snap.Web.Routes
+    Snap.Web.Routes.App
     Snap.Web.Routes.Heist
     Snap.Web.Routes.Types
 
