@@ -1,3 +1,8 @@
+2014-05-06 0.3.0.0
+
+* Rename heistUrl to urlSplice
+* Add convenience functions to render routes as Text
+
 2014-05-06 0.2.0.0
 
 * Document functions properly
