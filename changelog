@@ -1,3 +1,5 @@
+2014-05-06 0.2.0.0
+
 * Document functions properly
 * pass if routing fails
 * Fix haddocks & improve tutorial
