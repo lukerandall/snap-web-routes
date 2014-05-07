@@ -37,7 +37,7 @@ data AppUrl
 -- Extend your App type to include the router snaplet.
 data App = App
     { _heist :: Snaplet (Heist App)
-    , _route :: Snaplet RouterState
+    , _router :: Snaplet RouterState
     }
 
 -- Thanks to Generic, an empty instance definition is all
