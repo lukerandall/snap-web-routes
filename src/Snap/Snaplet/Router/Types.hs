@@ -1,6 +1,11 @@
 module Snap.Snaplet.Router.Types
-  ( Generic
-  , PathInfo(..)
+  ( RouterState (..)
+  , HasRouter (..)
+  , PathInfo (..)
+  -- * Re-exported for convenience
+  , Generic
   ) where
 
-import Web.Routes
+
+import Snap.Snaplet.Router.Internal.Types
+import Web.Routes (PathInfo, Generic)
