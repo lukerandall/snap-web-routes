@@ -30,11 +30,10 @@ library
 
   exposed-modules:
     Snap.Snaplet.Router
-    Snap.Web.Routes
-    Snap.Web.Routes.App
-    Snap.Web.Routes.Heist
-    Snap.Web.Routes.Text
-    Snap.Web.Routes.Types
+    Snap.Snaplet.Router.Heist
+    Snap.Snaplet.Router.Internal.Types
+    Snap.Snaplet.Router.Types
+    Snap.Snaplet.Router.URL
 
   build-depends:
     base                      >= 4.4     && < 5,
