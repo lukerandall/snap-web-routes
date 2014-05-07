@@ -22,44 +22,54 @@ To get going, you'll need to add a few things to `Application.hs`. This includes
 -- Paths and params use Text.
 import Data.Text (Text)
 
--- Snap.Web.Routes.Types exports everything you need to
--- define your PathInfo and MonadRoute instances.
+-- Snap.Snaplet.Router.Types exports everything you need to
+-- define your PathInfo and HasRouter instances.
 import Snap.Web.Routes.Types
 
--- Your URL data type.  Deriving a `Generic` instance gives
--- you a `PathInfo` instance for free.
+-- Your URL data type.  Deriving a `Generic` allows you to
+-- get a free `PathInfo` instance.
 data AppUrl
     = Count Int
     | Echo Text
     | Paths [Text]
       deriving (Generic)
 
--- Extend your App type to include a routing function.
+-- Extend your App type to include the router snaplet.
 data App = App
-    { _routeFn :: AppUrl -> [(Text, Maybe Text)] -> Text
+    { _heist :: Snaplet (Heist App)
+    , _route :: Snaplet RouterState
     }
 
--- Thanks to the wonders of Generic, an empty instance
--- definition is all we need. Alternately, you can implement
--- toPathSegments and fromPathSegments yourself or use
--- web-routes-th.
+-- Thanks to Generic, an empty instance definition is all
+-- you need. Alternately, you can implement 'toPathSegments'
+-- and 'fromPathSegments' yourself or use web-routes-th.
 instance PathInfo AppUrl
 
--- Set URL (Handler App App) to your URL data type defined above
--- and askRouteFn must point to the routing function you added to
--- your App.
-instance MonadRoute (Handler App App) where
-   type URL (Handler App App) = AppUrl
-   askRouteFn = gets _routeFn
+-- You need to define a HasRouter instance for your app.
+-- @type URL (Handler App App)@ must be set to the URL
+-- data type you defined above.
+-- @with router@ uses the lens for the @RouterState@ snaplet
+-- you added to App.
+instance HasRouter (Handler App App) where
+    type URL (Handler App App) = AppUrl
+    getRouterState = with router get
+
+-- You also need to define a HasRouter instance for the
+-- router snaplet.
+-- @type URL (Handler b RouterState)@ must be set to the URL
+-- data type you defined above.
+instance HasRouter (Handler b RouterState) where
+    type URL (Handler b RouterState) = AppUrl
+    getRouterState = get
 ```
 
 ### `Site.hs`
 
-Moving on to `Site.hs`, we'll setup handlers for each URL, as well initialise our app with a routing function.
+Moving on to `Site.hs`, we'll setup handlers for each URL, as well initialise our app with the router snaplet..
 
 ```haskell
--- Snap.Web.Routes provides routing functions
-import Snap.Web.Routes
+-- Snap.Snaplet.Router provides routing functions
+import Snap.Snaplet.Router
 
 -- Add your new routes using routeWith
 routes :: [(ByteString, Handler App App ())]
@@ -81,20 +91,22 @@ routeAppUrl appUrl =
 echo :: T.Text -> Handler App App ()
 echo msg = heistLocal (bindString "message" msg) $ render "echo"
 
--- Add the routing function to your app.
+-- Add the router snaplet to your app.
 app :: SnapletInit App App
 app = makeSnaplet "app" "An example snap-web-routes app." Nothing $ do
+    h <- nestSnaplet "" heist $ heistInit "templates"
+    r <- nestSnaplet "router" router $ initRouter ""
     addRoutes routes
-    return $ App renderRoute
+    return $ App h r
 ```
 
-If you prefixed the routes in routeWith (e.g. `("/prefix", routeWith routeAppUrl)`) then use `renderRouteWithPrefix` instead:
+The prefix you pass to the router snaplet must match the prefix you specified in routes, e.g. if it was `("/prefix", routeWith routeAppUrl)`) then:
 
 ```haskell
-return . App $ renderRouteWithPrefix "/prefix"
+r <- nestSnaplet "router" router $ initRouter "/prefix"
 ```
 
-If you are having trouble figuring out why a particular request isn't routing as expected, try replacing `routeWith` with `routeWithDebug`. It'll display the available routes, as well as any failed route parses. Just remember that it's **not suitable for production** use.
+If you are having trouble figuring out why a particular request isn't routing as expected, try replacing `routeWith` with `routeWithDebug`. It'll display the available routes, as well as any failed route parses. Just remember that it's **not suitable for production** use, and only displays debugging information for local requests.
 
 ### Rendering URLs
 
@@ -103,8 +115,7 @@ Helper functions are provided for rendering URLs:
 ```haskell
 echo :: T.Text -> Handler App App ()
 echo msg = do
-    url <- showUrl $ Echo "this is a test"
-    if msg == "test" then redirect (encodeUtf8 url) else renderEcho
+    if msg == "test" then redirectURL (Echo "test passed") else renderEcho
   where
     renderEcho = heistLocal (I.bindSplices echoSplices) $ render "echo"
     echoSplices = do
@@ -112,4 +123,4 @@ echo msg = do
         "countUrl" ## urlSplice (Count 10)
 ```
 
-In the example above you'll find we use `urlSplice` to turn a URL into a splice, and `showUrl` to render a URL as Text.
+In the example above you'll find we use `urlSplice` to turn a URL into a splice, and `redirectURL` to redirect to a URL. There is also `urlPath` to render a URL as Text, as well as params versions of all these functions (`urlParamsSplice`, `redirectURLParams` and `urlPathParams`) that take a params list to append as a query string.
