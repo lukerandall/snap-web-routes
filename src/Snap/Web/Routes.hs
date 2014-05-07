@@ -2,7 +2,9 @@
 -- This module provides a ready to use implementation of `web-routes` for Snap.
 --
 module Snap.Web.Routes
-  ( routeWith
+  ( redirectUrl
+  , redirectUrlParams
+  , routeWith
   , routeWithDebug
   , renderRoute
   , renderRouteWithPrefix

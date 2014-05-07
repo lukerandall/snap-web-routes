@@ -1,5 +1,5 @@
 name:                snap-web-routes
-version:             0.3.0.1
+version:             0.4.0.0
 synopsis:            Type safe URLs for Snap
 description:
     Type safe URL generation and routing for Snap using web-routes.
@@ -29,6 +29,7 @@ library
   hs-source-dirs:      src
 
   exposed-modules:
+    Snap.Snaplet.Router
     Snap.Web.Routes
     Snap.Web.Routes.App
     Snap.Web.Routes.Heist

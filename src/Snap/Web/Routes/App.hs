@@ -2,7 +2,9 @@
 {-# LANGUAGE TypeFamilies      #-}
 
 module Snap.Web.Routes.App
-  ( routeWith
+  ( redirectUrl
+  , redirectUrlParams
+  , routeWith
   , routeWithDebug
   , renderRoute
   , renderRouteWithPrefix
@@ -11,10 +13,27 @@ module Snap.Web.Routes.App
 
 import Control.Monad.State (lift, gets)
 import Data.Text (Text, append, pack)
+import Data.Text.Encoding (encodeUtf8)
 import Heist (HeistT)
 import Snap.Core
 import Snap.Snaplet
+import Snap.Web.Routes.Text
 import Web.Routes
+
+
+------------------------------------------------------------------------------
+-- | Redirect to the path for the given URL data type.
+redirectUrl :: (MonadSnap m, MonadRoute m) => URL m -- ^ URL data type
+            -> m ()
+redirectUrl url = redirectUrlParams url []
+
+
+------------------------------------------------------------------------------
+-- | Redirect to the path for the given URL data type and params.
+redirectUrlParams :: (MonadSnap m, MonadRoute m) => URL m -- ^ URL data type
+            -> [(Text, Maybe Text)] -- ^ parameters
+            -> m ()
+redirectUrlParams url params = showUrlParams url params >>= redirect . encodeUtf8
 
 
 ------------------------------------------------------------------------------
