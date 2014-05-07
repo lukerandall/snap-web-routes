@@ -19,6 +19,9 @@ To get going, you'll need to add a few things to `Application.hs`. This includes
 {-# LANGUAGE DeriveGeneric     #-} -- Needed to derive Generic
                                    -- for our URL data type
 
+-- Used in HasRouter instances
+import Control.Monad.State (get)
+
 -- Paths and params use Text.
 import Data.Text (Text)
 
