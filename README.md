@@ -32,7 +32,9 @@ import Snap.Snaplet.Router.Types
 -- Your URL data type.  Deriving a `Generic` allows you to
 -- get a free `PathInfo` instance.
 data AppUrl
-    = Count Int
+    = Login
+    | Logout
+    | Count Int
     | Echo Text
     | Paths [Text]
       deriving (Generic)
@@ -83,6 +85,8 @@ routes = [ ("", routeWith routeAppUrl)
 routeAppUrl :: AppUrl -> Handler App App ()
 routeAppUrl appUrl =
     case appUrl of
+      (Login)     -> with auth handleLoginSubmit
+      (Logout)    -> with auth handleLogout
       (Count n)   -> writeText $ ("Count = " `T.append` (T.pack $ show n))
       (Echo text) -> echo text
       (Paths ps)  -> writeText $ T.intercalate " " ps
@@ -110,19 +114,44 @@ r <- nestSnaplet "router" router $ initRouter "/prefix"
 
 If you are having trouble figuring out why a particular request isn't routing as expected, try replacing `routeWith` with `routeWithDebug`. It'll display the available routes, as well as any failed route parses. Just remember that it's **not suitable for production** use, and only displays debugging information for local requests.
 
-### Rendering URLs
+### Using URLs
 
-Helper functions are provided for rendering URLs:
+Let's look at how you can use your newly defined URL data type in your app. Firstly, you'll probably want to add links in Heist views. This is easily accomplished with the `urlSplice` and `urlParamsSplice` functions.
 
 ```haskell
-echo :: T.Text -> Handler App App ()
-echo msg = do
-    if msg == "test" then redirectURL (Echo "test passed") else renderEcho
+linksHandler :: Handler App App ()
+linksHandler = heistLocal (I.bindSplices linksSplices) $ render "links"
   where
-    renderEcho = heistLocal (I.bindSplices echoSplices) $ render "echo"
-    echoSplices = do
-        "message"  ## I.textSplice msg
-        "countUrl" ## urlSplice (Count 10)
+    linksSplices = do
+        "loginUrl" ## urlSplice Login
+        "echoUrl"  ## urlSplice (Echo "ping")
+        "countUrl" ## urlParamsSplice (Count 10) [("show-explanation", Just "true")]
 ```
 
-In the example above you'll find we use `urlSplice` to turn a URL into a splice, and `redirectURL` to redirect to a URL. There is also `urlPath` to render a URL as Text, as well as params versions of all these functions (`urlParamsSplice`, `redirectURLParams` and `urlPathParams`) that take a params list to append as a query string.
+As you can see, splicing URLs into Heist views is easily accomplished. You will likely also want to redirect to the handler for a certain URL. To do this we've got `redirectURL` and `redirectURLParams`. Let's look at an example.
+
+```haskell
+doSomethingHandler :: Handler App App ()
+doSomethingHandler = doSomething >> redirectURL Logout
+```
+
+However, you will sometimes wish to redirect within a handler that runs in a snaplet other than the main app. With the router snaplet though, this is easily done:
+
+```haskell
+handleLogout :: Handler App (AuthManager App) ()
+handleLogout = logout >> (withTop router $ redirectURL (Echo "logged out"))
+```
+
+Lastly, you can render a URL as Text with `urlPath` and `urlPathParams`.
+
+```haskell
+messageHandler :: Handler App App ()
+messageHandler = do
+    pathText <- urlPath (Echo "hello")
+    heistLocal (I.bindSplices $ messageSplices path) $ render "message"
+  where
+    messageSplices path = do
+        "message"  ## I.textSplice $ "The path you are lookin for is " `append` pathText
+```
+
+Remember, for each of `urlSplice`, `redirectURL` and `urlPath` there is a params version that takes a params list and will render the URL with the params as a query string.
