@@ -43,7 +43,7 @@ data AppUrl
     | Count Int
     | Echo Text
     | Paths [Text]
-      deriving (Generic)
+      deriving (Eq, Show, Read, Generic)
 
 -- Extend your App type to include the router snaplet.
 data App = App
