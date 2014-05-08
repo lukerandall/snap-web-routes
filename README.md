@@ -2,15 +2,21 @@
 
 ## Type safe URLs for Snap
 
-[`Snap web routes`](http://hackage.haskell.org/package/snap-web-routes) provides type safe URLs for Snap using [`web routes`](http://hackage.haskell.org/package/web-routes).
+[`Snap web routes`](http://hackage.haskell.org/package/snap-web-routes)
+provides type safe URLs for Snap using
+[`web routes`](http://hackage.haskell.org/package/web-routes).
 
 ## How to use
 
-The tutorial assumes you have a standard Snap app layout with an Application.hs and Site.hs. If your setup differs you'll need to adapt the instructions accordingly.
+The tutorial assumes you have a standard Snap app layout with an
+Application.hs and Site.hs. If your setup differs you'll need to adapt
+things accordingly.
 
 ### `Application.hs`
 
-To get going, you'll need to add a few things to `Application.hs`. This includes creating the URL data type and adding the routing function to our `App` data type.
+To get going, you'll need to add a few things to `Application.hs`.
+This includes creating the URL data type and adding the routing
+function to our `App` data type.
 
 ```haskell
 -- Enable a few extensions
@@ -69,7 +75,8 @@ instance HasRouter (Handler b RouterState) where
 
 ### `Site.hs`
 
-Moving on to `Site.hs`, we'll setup handlers for each URL, as well initialise our app with the router snaplet..
+Moving on to `Site.hs`, we'll setup handlers for each URL, as well as initialise
+our app with the router snaplet..
 
 ```haskell
 -- Snap.Snaplet.Router provides routing functions
@@ -106,17 +113,24 @@ app = makeSnaplet "app" "An example snap-web-routes app." Nothing $ do
     return $ App h r
 ```
 
-The prefix you pass to the router snaplet must match the prefix you specified in routes, e.g. if it was `("/prefix", routeWith routeAppUrl)`) then:
+The prefix you pass to the router snaplet must match the prefix you specified
+in routes, e.g. if it was `("/prefix", routeWith routeAppUrl)`) then:
 
 ```haskell
 r <- nestSnaplet "router" router $ initRouter "/prefix"
 ```
 
-If you are having trouble figuring out why a particular request isn't routing as expected, try replacing `routeWith` with `routeWithDebug`. It'll display the available routes, as well as any failed route parses. Just remember that it's **not suitable for production** use, and only displays debugging information for local requests.
+If you are having trouble figuring out why a particular request isn't routing
+as expected, try replacing `routeWith` with `routeWithDebug`. It'll display
+the available routes, as well as any failed route parses. Just remember that
+it's **not suitable for production** use, and only displays debugging
+information for local requests.
 
 ### Using URLs
 
-Let's look at how you can use your newly defined URL data type in your app. Firstly, you'll probably want to add links in Heist views. This is easily accomplished with the `urlSplice` and `urlParamsSplice` functions.
+Let's look at how you can use your newly defined URL data type in your app.
+Firstly, you'll probably want to add links in Heist views. This is easily
+accomplished with the `urlSplice` and `urlParamsSplice` functions.
 
 ```haskell
 linksHandler :: Handler App App ()
@@ -125,17 +139,22 @@ linksHandler = heistLocal (I.bindSplices linksSplices) $ render "links"
     linksSplices = do
         "loginUrl" ## urlSplice Login
         "echoUrl"  ## urlSplice (Echo "ping")
-        "countUrl" ## urlParamsSplice (Count 10) [("show-explanation", Just "true")]
+        "countUrl" ## urlParamsSplice (Count 10) [("explanation", Just "true")]
 ```
 
-As you can see, splicing URLs into Heist views is easily accomplished. You will likely also want to redirect to the handler for a certain URL. To do this we've got `redirectURL` and `redirectURLParams`. Let's look at an example.
+As you can see, splicing URLs into Heist views is easily accomplished. You
+will likely also want to redirect to the handler for a certain URL. To do
+this we've got `redirectURL` and `redirectURLParams`. Let's look at an
+example.
 
 ```haskell
 doSomethingHandler :: Handler App App ()
 doSomethingHandler = doSomething >> redirectURL Logout
 ```
 
-However, you will sometimes wish to redirect within a handler that runs in a snaplet other than the main app. With the router snaplet though, this is easily done:
+However, you will sometimes wish to redirect within a handler that runs in a
+snaplet other than the main app. With the router snaplet though, this is
+easily done:
 
 ```haskell
 handleLogout :: Handler App (AuthManager App) ()
@@ -151,7 +170,9 @@ messageHandler = do
     heistLocal (I.bindSplices $ messageSplices path) $ render "message"
   where
     messageSplices path = do
-        "message"  ## I.textSplice $ "The path you are lookin for is " `append` pathText
+        "message"  ## I.textSplice $ "The path is " `append` pathText
 ```
 
-Remember, for each of `urlSplice`, `redirectURL` and `urlPath` there is a params version that takes a params list and will render the URL with the params as a query string.
+Remember, for each of `urlSplice`, `redirectURL` and `urlPath` there is a
+params version that takes a params list as an extra argument, and renders
+the URL with the given params as a query string.
