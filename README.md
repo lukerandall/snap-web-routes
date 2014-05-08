@@ -27,7 +27,7 @@ import Data.Text (Text)
 
 -- Snap.Snaplet.Router.Types exports everything you need to
 -- define your PathInfo and HasRouter instances.
-import Snap.Web.Routes.Types
+import Snap.Snaplet.Router.Types
 
 -- Your URL data type.  Deriving a `Generic` allows you to
 -- get a free `PathInfo` instance.
@@ -49,18 +49,17 @@ data App = App
 instance PathInfo AppUrl
 
 -- You need to define a HasRouter instance for your app.
--- @type URL (Handler App App)@ must be set to the URL
--- data type you defined above.
--- @with router@ uses the lens for the @RouterState@ snaplet
+-- You must set type URL (Handler App App) to the URL
+-- data type you defined above. The router in
+-- `with router` is the lens for the @RouterState@ snaplet
 -- you added to App.
 instance HasRouter (Handler App App) where
     type URL (Handler App App) = AppUrl
     getRouterState = with router get
 
 -- You also need to define a HasRouter instance for the
--- router snaplet.
--- @type URL (Handler b RouterState)@ must be set to the URL
--- data type you defined above.
+-- router snaplet. Once again, set type URL (Handler b
+-- RouterState) to the data type you defined above.
 instance HasRouter (Handler b RouterState) where
     type URL (Handler b RouterState) = AppUrl
     getRouterState = get
