@@ -1,3 +1,5 @@
+* Ignore trailing slashes
+
 2014-05-07 0.4.0.0
 
 * Make router a snaplet

@@ -18,6 +18,8 @@ module Snap.Snaplet.Router
    ) where
 
 
+import           Data.ByteString (ByteString)
+import qualified Data.ByteString.Char8 as B
 import           Data.Text
 import           Snap.Core (MonadSnap)
 import qualified Snap.Core as SC
@@ -61,8 +63,19 @@ routeWithDebug = flip routeWithOr (failIfNotLocal . SC.writeText)
 ------------------------------------------------------------------------------
 routeWithOr
     :: (PathInfo url, MonadSnap m) => (url -> m ()) -> (Text -> m ()) -> m ()
-routeWithOr router leftFn =
-    do rq <- SC.getRequest
-       case fromPathInfo $ SC.rqPathInfo rq of
-         (Left e)    -> leftFn . pack $ e
+routeWithOr router onLeft = do
+    rqPath <- rqPathInfoNormalized
+    case fromPathInfo rqPath of
+         (Left e)    -> onLeft . pack $ e
          (Right url) -> router url
+
+rqPathInfoNormalized
+    :: (MonadSnap m) => m ByteString
+rqPathInfoNormalized = do
+    rq <- SC.getRequest
+    return . dropSlash $ SC.rqPathInfo rq
+  where
+    dropSlash s =
+        if ((B.singleton '/') `B.isSuffixOf` s)
+        then dropSlash $ B.init s
+        else s
