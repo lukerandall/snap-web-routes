@@ -31,7 +31,6 @@ import           Snap.Snaplet.Router.URL
 import           Snap.Snaplet.Router.Internal.Types
 
 
-
 ------------------------------------------------------------------------------
 -- | Snaplet initializer.
 initRouter :: Text  -- ^ Prefix to add to paths.
