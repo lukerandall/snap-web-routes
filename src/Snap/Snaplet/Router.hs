@@ -73,9 +73,9 @@ rqPathInfoNormalized
     :: (MonadSnap m) => m ByteString
 rqPathInfoNormalized = do
     rq <- SC.getRequest
-    return . dropSlash $ SC.rqPathInfo rq
+    return . dropTrailingSlashes $ SC.rqPathInfo rq
   where
-    dropSlash s =
+    dropTrailingSlashes s =
         if ((B.singleton '/') `B.isSuffixOf` s)
-        then dropSlash $ B.init s
+        then dropTrailingSlashes $ B.init s
         else s
