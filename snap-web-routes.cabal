@@ -30,7 +30,7 @@ library
 
   exposed-modules:
     Snap.Snaplet.Router
-    Snap.Snaplet.Router.Heist
+    Snap.Snaplet.Router.HeistSplices
     Snap.Snaplet.Router.Internal.Types
     Snap.Snaplet.Router.REST
     Snap.Snaplet.Router.Types

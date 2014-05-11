@@ -26,7 +26,7 @@ import qualified Snap.Core as SC
 import           Snap.Snaplet
 import           Web.Routes (PathInfo, toPathInfoParams, fromPathInfo)
 ------------------------------------------------------------------------------
-import           Snap.Snaplet.Router.Heist
+import           Snap.Snaplet.Router.HeistSplices
 import           Snap.Snaplet.Router.URL
 import           Snap.Snaplet.Router.Internal.Types
 

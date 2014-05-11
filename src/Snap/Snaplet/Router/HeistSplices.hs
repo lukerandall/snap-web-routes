@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts  #-}
 
-module Snap.Snaplet.Router.Heist
+module Snap.Snaplet.Router.HeistSplices
   ( urlSplice
   , urlParamsSplice
   ) where
