@@ -75,6 +75,6 @@ rqPathInfoNormalized = do
     return . dropTrailingSlashes $ SC.rqPathInfo rq
   where
     dropTrailingSlashes s =
-        if ((B.singleton '/') `B.isSuffixOf` s)
+        if B.singleton '/' `B.isSuffixOf` s
         then dropTrailingSlashes $ B.init s
         else s
