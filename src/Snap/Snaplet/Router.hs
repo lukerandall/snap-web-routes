@@ -24,7 +24,7 @@ import           Data.Text
 import           Snap.Core (MonadSnap)
 import qualified Snap.Core as SC
 import           Snap.Snaplet
-import           Web.Routes (PathInfo, toPathInfoParams, fromPathInfo)
+import           Web.Routes (PathInfo, fromPathInfo)
 ------------------------------------------------------------------------------
 import           Snap.Snaplet.Router.HeistSplices
 import           Snap.Snaplet.Router.URL

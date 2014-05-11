@@ -12,9 +12,8 @@ import           Data.Text
 import           Data.Text.Encoding (encodeUtf8)
 import           Snap.Core (MonadSnap)
 import qualified Snap.Core as SC
-import           Snap.Snaplet
 import           Snap.Snaplet.Router.Internal.Types
-import           Web.Routes (PathInfo, toPathInfoParams, fromPathInfo)
+import           Web.Routes (PathInfo, toPathInfoParams)
 
 
 ------------------------------------------------------------------------------
