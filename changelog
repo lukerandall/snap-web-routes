@@ -1,4 +1,4 @@
-* Add Resource data type for RESTful routes
+* Add Resource and SingletonResource data types for RESTful routes
 * Ignore trailing slashes
 
 2014-05-07 0.4.0.0
