@@ -1,33 +1,66 @@
-{-# LANGUAGE DeriveGeneric     #-}
+-- | This module provides data types useful for declaring RESTful routes.
+-- 'Resource' is provided for the common case of resource specified
+-- by a unique identifier (for e.g. @\/products\/3@). 'SingletonResource'
+-- is provided for resources that do not require an identifier. Typical
+-- usage would be as follows:
+--
+-- @
+-- data AppUrl
+--     = User (Resource Int)
+--     | Profile SingletonResource
+--     | Login
+--     | Logout
+-- @
+--
+-- This now allows you to define handlers for different end points for
+-- your resource.
+-- @
+-- routeAppUrl appUrl =
+--     case appUrl of
+--       Login          -> with auth handleLogin   -- \/login
+--       Logout         -> with auth handleLogout  -- \/logout
+--       User Index     -> handleUserIndex         -- \/user
+--       User New       -> handleUserNew           -- \/user\/new
+--       User (Show n)  -> handleUserShow n        -- \/user\/:Int
+--       User (Edit n)  -> handleUserEdit n        -- \/user\/:Int\/edit
+--       Profile ShowS  -> handleProfileShow       -- \/profile
+--       Profile NewS   -> handleProfileNew        -- \/profile/new
+--       Profile EditS  -> handleProfileEdit       -- \/profile/edit
+-- @
+--
+
 {-# LANGUAGE OverloadedStrings #-}
 
 module Snap.Snaplet.Router.REST
     ( Resource (..)
-    , SingularResource (..)
+    , SingletonResource (..)
     ) where
 
 
 import Control.Applicative
-import GHC.Generics
 import Web.Routes.PathInfo (PathInfo (..), segment, toPathSegments, fromPathSegments)
 
 
-data Resource a
+-- | A data type to represent RESTful resources that have a unique identifier.
+-- The data type used as the identifier must be an instance of 'PathInfo'.
+data (PathInfo id) => Resource id
     = Index
     | New
-    | Show a
-    | Edit a
-      deriving (Eq, Show, Read, Generic)
+    | Show id
+    | Edit id
+      deriving (Eq, Show, Read)
 
 
-data SingularResource
+-- | A data type to represent singleton RESTful resources. Generally these
+-- are identified in some other way, often the user's session.
+data SingletonResource
     = ShowS
     | NewS
     | EditS
-      deriving (Eq, Show, Read, Generic)
+      deriving (Eq, Show, Read)
 
 
-instance (PathInfo a) => PathInfo (Resource a) where
+instance (PathInfo id) => PathInfo (Resource id) where
     toPathSegments Index = []
     toPathSegments New   = ["new"]
     toPathSegments (Show n) = toPathSegments n
@@ -39,7 +72,7 @@ instance (PathInfo a) => PathInfo (Resource a) where
         <|> pure Index
 
 
-instance PathInfo SingularResource where
+instance PathInfo SingletonResource where
     toPathSegments ShowS = []
     toPathSegments NewS  = ["new"]
     toPathSegments EditS = ["edit"]
